@@ -60,9 +60,36 @@ const videoFrame = document.querySelector("[data-video-frame]");
 const videoTriggers = document.querySelectorAll("[data-video-trigger]");
 const videoCloseButtons = document.querySelectorAll("[data-video-close]");
 const mobileViewport = window.matchMedia("(max-width: 1024px)");
+const smallViewport = window.matchMedia("(max-width: 639px)");
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
 let testimonialPage = 0;
+
+const headerCta = document.querySelector(".header-cta");
+const headerLoginLink = headerCta?.querySelector("a[href*='login']");
+let navPanelCta = null;
+
+if (navPanel instanceof HTMLElement) {
+    navPanelCta = navPanel.querySelector(".nav-panel-cta");
+    if (!navPanelCta) {
+        navPanelCta = document.createElement("div");
+        navPanelCta.className = "nav-panel-cta";
+        navPanel.appendChild(navPanelCta);
+    }
+}
+
+const syncMobileLoginPlacement = () => {
+    if (!(headerLoginLink instanceof HTMLElement) || !(headerCta instanceof HTMLElement) || !(navPanelCta instanceof HTMLElement)) {
+        return;
+    }
+
+    if (smallViewport.matches) {
+        navPanelCta.appendChild(headerLoginLink);
+    } else {
+        headerCta.insertBefore(headerLoginLink, headerCta.firstChild);
+    }
+};
+
 
 const closeDropdowns = (keepOpen) => {
     dropdownToggles.forEach((toggle) => {
@@ -413,6 +440,10 @@ const getReviewCardsPerView = () => {
         return 1;
     }
 
+    if (window.innerWidth <= 1024) {
+        return 1;
+    }
+
     if (window.innerWidth <= 1280) {
         return 2;
     }
@@ -504,12 +535,17 @@ updateThemeIcon();
 updateScrollState();
 updateNotificationCount();
 setActiveHeaderLink();
+syncMobileLoginPlacement();
 
 themeToggle?.addEventListener("click", () => {
     body.classList.toggle("dark-mode");
     localStorage.setItem("pulseforge-theme", body.classList.contains("dark-mode") ? "light" : "dark");
     updateThemeIcon();
+    window.requestAnimationFrame(initDashboardCharts);
 });
+
+smallViewport.addEventListener("change", syncMobileLoginPlacement);
+
 
 rtlToggle?.addEventListener("click", () => {
     const nextDirection = root.getAttribute("dir") === "rtl" ? "ltr" : "rtl";
@@ -897,6 +933,8 @@ const getCssVar = (name, fallback) => {
     return value || fallback;
 };
 
+let dashboardCharts = [];
+
 const initDashboardCharts = () => {
     if (typeof Chart === "undefined") {
         return;
@@ -926,6 +964,9 @@ const initDashboardCharts = () => {
 
     const textMuted = getCssVar("--text-muted", "#9aa7bd");
     const textPrimary = getCssVar("--text-primary", "#f5f7fb");
+    const gridColor = body.classList.contains("dark-mode")
+        ? "rgba(13,21,37,0.08)"
+        : "rgba(255,255,255,0.08)";
 
     const tooltipStyle = {
         backgroundColor: "rgba(10,16,26,0.9)",
@@ -935,6 +976,11 @@ const initDashboardCharts = () => {
         bodyColor: textPrimary,
     };
 
+    if (dashboardCharts.length) {
+        dashboardCharts.forEach((chart) => chart.destroy());
+        dashboardCharts = [];
+    }
+
     if (workoutCanvas instanceof HTMLCanvasElement) {
         const lineCtx = workoutCanvas.getContext("2d");
         const lineGradient = lineCtx?.createLinearGradient(0, 0, 0, 220);
@@ -943,7 +989,7 @@ const initDashboardCharts = () => {
             lineGradient.addColorStop(1, "rgba(141,255,47,0)");
         }
 
-        new Chart(workoutCanvas, {
+        dashboardCharts.push(new Chart(workoutCanvas, {
             type: "line",
             data: {
                 labels: ["W1", "W2", "W3", "W4", "W5", "W6", "W7", "W8"],
@@ -974,20 +1020,20 @@ const initDashboardCharts = () => {
                 },
                 scales: {
                     x: {
-                        grid: { color: "rgba(255,255,255,0.05)" },
+                        grid: { color: gridColor },
                         ticks: { color: textMuted },
                     },
                     y: {
-                        grid: { color: "rgba(255,255,255,0.05)" },
+                        grid: { color: gridColor },
                         ticks: { color: textMuted },
                     },
                 },
             },
-        });
+        }));
     }
 
     if (caloriesCanvas instanceof HTMLCanvasElement) {
-        new Chart(caloriesCanvas, {
+        dashboardCharts.push(new Chart(caloriesCanvas, {
             type: "bar",
             data: {
                 labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
@@ -1026,16 +1072,16 @@ const initDashboardCharts = () => {
                         ticks: { color: textMuted },
                     },
                     y: {
-                        grid: { color: "rgba(255,255,255,0.05)" },
+                        grid: { color: gridColor },
                         ticks: { color: textMuted },
                     },
                 },
             },
-        });
+        }));
     }
 
     if (nutritionCanvas instanceof HTMLCanvasElement) {
-        new Chart(nutritionCanvas, {
+        dashboardCharts.push(new Chart(nutritionCanvas, {
             type: "doughnut",
             data: {
                 labels: ["Protein", "Carbs", "Fat"],
@@ -1060,7 +1106,7 @@ const initDashboardCharts = () => {
                     tooltip: tooltipStyle,
                 },
             },
-        });
+        }));
     }
 
     if (strengthProgressCanvas instanceof HTMLCanvasElement) {
@@ -1071,7 +1117,7 @@ const initDashboardCharts = () => {
             strengthGradient.addColorStop(1, "rgba(75,228,255,0)");
         }
 
-        new Chart(strengthProgressCanvas, {
+        dashboardCharts.push(new Chart(strengthProgressCanvas, {
             type: "line",
             data: {
                 labels: ["W1", "W2", "W3", "W4", "W5", "W6"],
@@ -1102,20 +1148,20 @@ const initDashboardCharts = () => {
                 },
                 scales: {
                     x: {
-                        grid: { color: "rgba(255,255,255,0.05)" },
+                        grid: { color: gridColor },
                         ticks: { color: textMuted },
                     },
                     y: {
-                        grid: { color: "rgba(255,255,255,0.05)" },
+                        grid: { color: gridColor },
                         ticks: { color: textMuted },
                     },
                 },
             },
-        });
+        }));
     }
 
     if (nutritionMacroCanvas instanceof HTMLCanvasElement) {
-        new Chart(nutritionMacroCanvas, {
+        dashboardCharts.push(new Chart(nutritionMacroCanvas, {
             type: "doughnut",
             data: {
                 labels: ["Protein", "Carbs", "Fat"],
@@ -1140,7 +1186,7 @@ const initDashboardCharts = () => {
                     tooltip: tooltipStyle,
                 },
             },
-        });
+        }));
     }
 
     if (weightProgressCanvas instanceof HTMLCanvasElement) {
@@ -1151,7 +1197,7 @@ const initDashboardCharts = () => {
             weightGradient.addColorStop(1, "rgba(171,129,255,0)");
         }
 
-        new Chart(weightProgressCanvas, {
+        dashboardCharts.push(new Chart(weightProgressCanvas, {
             type: "line",
             data: {
                 labels: ["W1", "W2", "W3", "W4", "W5", "W6"],
@@ -1182,20 +1228,20 @@ const initDashboardCharts = () => {
                 },
                 scales: {
                     x: {
-                        grid: { color: "rgba(255,255,255,0.05)" },
+                        grid: { color: gridColor },
                         ticks: { color: textMuted },
                     },
                     y: {
-                        grid: { color: "rgba(255,255,255,0.05)" },
+                        grid: { color: gridColor },
                         ticks: { color: textMuted },
                     },
                 },
             },
-        });
+        }));
     }
 
     if (strengthAnalyticsCanvas instanceof HTMLCanvasElement) {
-        new Chart(strengthAnalyticsCanvas, {
+        dashboardCharts.push(new Chart(strengthAnalyticsCanvas, {
             type: "line",
             data: {
                 labels: ["W1", "W2", "W3", "W4", "W5", "W6"],
@@ -1237,20 +1283,20 @@ const initDashboardCharts = () => {
                 },
                 scales: {
                     x: {
-                        grid: { color: "rgba(255,255,255,0.05)" },
+                        grid: { color: gridColor },
                         ticks: { color: textMuted },
                     },
                     y: {
-                        grid: { color: "rgba(255,255,255,0.05)" },
+                        grid: { color: gridColor },
                         ticks: { color: textMuted },
                     },
                 },
             },
-        });
+        }));
     }
 
     if (performanceTrendsCanvas instanceof HTMLCanvasElement) {
-        new Chart(performanceTrendsCanvas, {
+        dashboardCharts.push(new Chart(performanceTrendsCanvas, {
             type: "bar",
             data: {
                 labels: ["Energy", "Recovery", "Sleep", "Stress"],
@@ -1286,12 +1332,12 @@ const initDashboardCharts = () => {
                         ticks: { color: textMuted },
                     },
                     y: {
-                        grid: { color: "rgba(255,255,255,0.05)" },
+                        grid: { color: gridColor },
                         ticks: { color: textMuted },
                     },
                 },
             },
-        });
+        }));
     }
 };
 
@@ -1348,16 +1394,27 @@ lightbox.remove()
 const sidebarToggle = document.getElementById("sidebarToggle");
 const dashboardSidebar = document.getElementById("dashboardSidebar");
 const dashboardOverlay = document.querySelector("[data-dashboard-overlay]");
+let setSidebarState = null;
 
 if (sidebarToggle && dashboardSidebar) {
+  const sidebarIcon = sidebarToggle.querySelector("i");
+
+  setSidebarState = (isOpen) => {
+    dashboardSidebar.classList.toggle("is-open", isOpen);
+    body.classList.toggle("nav-open", isOpen);
+    sidebarToggle.setAttribute("aria-expanded", String(isOpen));
+    if (sidebarIcon) {
+      sidebarIcon.className = isOpen ? "fa-solid fa-xmark" : "fa-solid fa-bars";
+    }
+  };
+
   const closeSidebar = () => {
-    dashboardSidebar.classList.remove("is-open");
-    body.classList.remove("nav-open");
+    setSidebarState(false);
   };
 
   sidebarToggle.addEventListener("click", () => {
-    const isOpen = dashboardSidebar.classList.toggle("is-open");
-    body.classList.toggle("nav-open", isOpen);
+    const isOpen = !dashboardSidebar.classList.contains("is-open");
+    setSidebarState(isOpen);
   });
 
   dashboardOverlay?.addEventListener("click", closeSidebar);
@@ -1371,6 +1428,8 @@ if (sidebarToggle && dashboardSidebar) {
       closeSidebar();
     }
   });
+
+  setSidebarState(dashboardSidebar.classList.contains("is-open"));
 }
 
 
@@ -1402,8 +1461,12 @@ if (menuLinks.length && panels.length) {
 
       // AUTO CLOSE MOBILE SIDEBAR
       if (window.innerWidth < 1025 && dashboardSidebar) {
-        dashboardSidebar.classList.remove("is-open");
-        body.classList.remove("nav-open");
+        if (typeof setSidebarState === "function") {
+          setSidebarState(false);
+        } else {
+          dashboardSidebar.classList.remove("is-open");
+          body.classList.remove("nav-open");
+        }
       }
     });
   });
@@ -1412,59 +1475,49 @@ if (menuLinks.length && panels.length) {
 const togglePassword = document.getElementById("togglePassword");
 const passwordInput = document.getElementById("password");
 
-togglePassword.addEventListener("click", () => {
-  const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
-  passwordInput.setAttribute("type", type);
+if (togglePassword && passwordInput) {
+  togglePassword.addEventListener("click", () => {
+    const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
+    passwordInput.setAttribute("type", type);
 
-  togglePassword.innerHTML =
-    type === "password"
-      ? '<i class="fa-regular fa-eye"></i>'
-      : '<i class="fa-regular fa-eye-slash"></i>';
-});
+    togglePassword.innerHTML =
+      type === "password"
+        ? '<i class="fa-regular fa-eye"></i>'
+        : '<i class="fa-regular fa-eye-slash"></i>';
+  });
+}
 
 
 // FORM VALIDATION
 
 const form = document.getElementById("loginForm");
 
-form.addEventListener("submit", (e) => {
-  e.preventDefault();
+if (form) {
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
 
-  const email = document.getElementById("email");
-  const password = document.getElementById("password");
+    const email = document.getElementById("email");
+    const password = document.getElementById("password");
 
-  if (!email.value.trim() || !password.value.trim()) {
-    alert("Please fill all fields");
-    return;
-  }
+    if (!email.value.trim() || !password.value.trim()) {
+      alert("Please fill all fields");
+      return;
+    }
 
-  alert("Login successful");
-});
+    alert("Login successful");
+  });
+}
 
 // PASSWORD TOGGLE
 
 const regPassword = document.getElementById("password");
-const regToggle = document.getElementById("togglePassword");
-
-if(regToggle){
-regToggle.addEventListener("click", () => {
-
-  const isPassword = regPassword.type === "password";
-  regPassword.type = isPassword ? "text" : "password";
-
-  regToggle.innerHTML = isPassword
-    ? '<i class="fa-regular fa-eye-slash"></i>'
-    : '<i class="fa-regular fa-eye"></i>';
-
-});
-}
 
 
 // PASSWORD STRENGTH (NO INLINE STYLES)
 
 const strengthText = document.getElementById("passwordStrength");
 
-if(regPassword){
+if(regPassword && strengthText){
 regPassword.addEventListener("input", () => {
 
   const value = regPassword.value;
@@ -1519,25 +1572,30 @@ registerForm.addEventListener("submit", (e) => {
 });
 }
 
-const targetDate = new Date();
-targetDate.setDate(targetDate.getDate() + 10); // 10 days from now
+const countdownDays = document.getElementById("days");
+const countdownHours = document.getElementById("hours");
+const countdownMinutes = document.getElementById("minutes");
+const countdownSeconds = document.getElementById("seconds");
 
-function updateCountdown(){
+if (countdownDays && countdownHours && countdownMinutes && countdownSeconds) {
+  const targetDate = new Date();
+  targetDate.setDate(targetDate.getDate() + 10); // 10 days from now
 
-  const now = new Date();
-  const diff = targetDate - now;
+  const updateCountdown = () => {
+    const now = new Date();
+    const diff = targetDate - now;
 
-  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-  const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-  const minutes = Math.floor((diff / 1000 / 60) % 60);
-  const seconds = Math.floor((diff / 1000) % 60);
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+    const minutes = Math.floor((diff / 1000 / 60) % 60);
+    const seconds = Math.floor((diff / 1000) % 60);
 
-  document.getElementById("days").textContent = days;
-  document.getElementById("hours").textContent = hours;
-  document.getElementById("minutes").textContent = minutes;
-  document.getElementById("seconds").textContent = seconds;
+    countdownDays.textContent = days;
+    countdownHours.textContent = hours;
+    countdownMinutes.textContent = minutes;
+    countdownSeconds.textContent = seconds;
+  };
 
+  setInterval(updateCountdown, 1000);
+  updateCountdown();
 }
-
-setInterval(updateCountdown,1000);
-updateCountdown();

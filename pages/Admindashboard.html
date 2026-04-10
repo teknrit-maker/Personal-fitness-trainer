@@ -20,7 +20,7 @@
     <link rel="stylesheet" href="../assets/css/dark-mode.css" />
     <link rel="stylesheet" href="../assets/css/rtl.css" />
   </head>
-  <body class="dashboard-page">
+  <body class="dashboard-page admin-dashboard">
     <header class="site-header" data-header>
       <div class="container">
         <div class="navbar">
@@ -36,7 +36,7 @@
 
           <div class="header-tools">
             <button class="utility-button" data-rtl-toggle aria-label="Toggle RTL">
-              <i class="fa-solid fa-globe"></i>
+              <i class="fa-solid fa-right-left"></i>
             </button>
 
             <button class="utility-button" data-theme-toggle aria-label="Toggle theme">
@@ -1187,17 +1187,25 @@
           updateThemeIcon();
         });
 
+        const sidebarIcon = sidebarToggle?.querySelector("i");
+        const setSidebarState = (isOpen) => {
+          if (!sidebar) return;
+          sidebar.classList.toggle("is-open", isOpen);
+          body.classList.toggle("nav-open", isOpen);
+          sidebarToggle?.setAttribute("aria-expanded", String(isOpen));
+          if (sidebarIcon) {
+            sidebarIcon.className = isOpen ? "fa-solid fa-xmark" : "fa-solid fa-bars";
+          }
+        };
+
         const closeSidebar = () => {
-          sidebar?.classList.remove("is-open");
-          body.classList.remove("nav-open");
-          sidebarToggle?.setAttribute("aria-expanded", "false");
+          setSidebarState(false);
         };
 
         sidebarToggle?.addEventListener("click", () => {
           if (!sidebar) return;
-          const isOpen = sidebar.classList.toggle("is-open");
-          body.classList.toggle("nav-open", isOpen);
-          sidebarToggle.setAttribute("aria-expanded", String(isOpen));
+          const isOpen = !sidebar.classList.contains("is-open");
+          setSidebarState(isOpen);
         });
 
         dashboardOverlay?.addEventListener("click", closeSidebar);
@@ -1208,8 +1216,7 @@
             if (!targetId) return;
             setActivePanel(targetId);
             if (mobileQuery.matches) {
-              sidebar?.classList.remove("is-open");
-              body.classList.remove("nav-open");
+              setSidebarState(false);
             }
           });
         });

@@ -17,7 +17,7 @@
 <section class="auth-page">
   <div class="auth-tools" aria-label="Display controls">
     <button class="utility-button" type="button" data-rtl-toggle aria-label="Toggle RTL direction">
-      <i class="fa-solid fa-globe" aria-hidden="true"></i>
+      <i class="fa-solid fa-right-left" aria-hidden="true"></i>
     </button>
     <button class="utility-button" type="button" data-theme-toggle aria-label="Toggle dark mode">
       <i class="fa-solid fa-sun" aria-hidden="true"></i>
@@ -27,12 +27,19 @@
   <div class="auth-container">
 
     <!-- LEFT SIDE -->
-    <div class="auth-visual">
+    <div class="auth-visual" style="--auth-visual-image:url('../assets/images/after-gal-4.avif')">
       <div class="auth-visual__content">
         <h1>Start Your Transformation</h1>
         <p>
           Join PulseForge and unlock structured workouts, smart nutrition, and real results.
         </p>
+      </div>
+      <div class="auth-visual__media">
+        <img src="../assets/images/after-gal-4.avif" alt="Coach guiding a focused strength session" loading="lazy">
+      </div>
+      <div class="auth-visual__badge">
+        <i class="fa-solid fa-star" aria-hidden="true"></i>
+        <span>Personalized plans from day one</span>
       </div>
     </div>
 
@@ -51,7 +58,7 @@
         </a>
 
         <div class="auth-form__header">
-          <h2>Create Your Account</h2>
+          <h2 class="auth-title--compact">Create Your Account</h2>
           <p>Start your fitness transformation today.</p>
         </div>
 
