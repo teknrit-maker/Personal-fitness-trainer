@@ -2221,6 +2221,19 @@ body.dark-mode .site-footer h3{
 color:var(--text-primary);
 }
 
+body.dark-mode .reviews-grid__header h3{
+color:var(--text-primary);
+}
+
+body.dark-mode .reviews-grid__header p{
+color:var(--text-muted);
+}
+
+body.dark-mode .reviews-slider__eyebrow{
+color:var(--accent-color-strong);
+background:rgba(180,255,57,0.12);
+}
+
 body.dark-mode.dashboard-page .site-header:not(.is-scrolled) .brand__mark,
 body.dark-mode.dashboard-page .site-header:not(.is-scrolled) .utility-button,
 body.dark-mode.dashboard-page .site-header:not(.is-scrolled) .menu-button{
