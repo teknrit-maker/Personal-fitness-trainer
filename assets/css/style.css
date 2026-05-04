@@ -2479,10 +2479,10 @@ body:not(.dark-mode) .site-header .nav-dropdown-toggle.is-active::after {
     min-width: 210px;
     max-width: 250px;
     padding: 1rem;
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.16);
     border-radius: 24px;
-    background: rgba(255, 255, 255, 0.08);
-    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.24);
+    background: linear-gradient(135deg, rgba(8, 12, 19, 0.9), rgba(18, 26, 36, 0.78));
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.34);
     color: #ffffff;
     backdrop-filter: blur(18px);
     animation: float-card 5.6s ease-in-out infinite;
@@ -2491,6 +2491,7 @@ body:not(.dark-mode) .site-header .nav-dropdown-toggle.is-active::after {
 .floating-ui-card--calories {
     top: 32px;
     left: 10px;
+    background: linear-gradient(135deg, rgba(10, 14, 20, 0.94), rgba(20, 29, 40, 0.82));
 }
 
 .floating-ui-card--progress {
@@ -2521,7 +2522,7 @@ body:not(.dark-mode) .site-header .nav-dropdown-toggle.is-active::after {
 .floating-ui-card__label {
     display: block;
     margin-bottom: 0.25rem;
-    color: rgba(243, 247, 252, 0.72);
+    color: rgba(243, 247, 252, 0.84);
     font-size: 0.84rem;
 }
 
@@ -9683,6 +9684,14 @@ transform:translateX(0);
         border-bottom-color: rgba(13, 21, 37, 0.08);
     }
 
+    body.dark-mode .site-header:not(.is-scrolled) .utility-button,
+    body.dark-mode .site-header:not(.is-scrolled) .menu-button {
+        background: rgba(255, 255, 255, 0.82);
+        border-color: rgba(13, 21, 37, 0.12);
+        box-shadow: 0 14px 30px rgba(13, 21, 37, 0.08);
+        color: var(--text-primary);
+    }
+
     body.dashboard-page .site-header {
         padding-top: 0;
     }
@@ -9791,6 +9800,29 @@ transform:translateX(0);
     .site-header:not(.is-scrolled) .nav-panel .nav-link,
     .site-header:not(.is-scrolled) .nav-panel .nav-dropdown-toggle {
         color: var(--text-primary);
+    }
+
+    .site-header .nav-panel .nav-link.is-active,
+    .site-header .nav-panel .nav-dropdown-toggle.is-active,
+    .site-header .nav-panel .dropdown-menu a.is-active,
+    body:not(.dark-mode) .site-header .nav-panel .nav-link.is-active,
+    body:not(.dark-mode) .site-header .nav-panel .nav-dropdown-toggle.is-active,
+    body:not(.dark-mode) .site-header .nav-panel .dropdown-menu a.is-active,
+    .site-header:not(.is-scrolled) .nav-panel .nav-link.is-active,
+    .site-header:not(.is-scrolled) .nav-panel .nav-dropdown-toggle.is-active,
+    .site-header.is-scrolled .nav-panel .nav-link.is-active,
+    .site-header.is-scrolled .nav-panel .nav-dropdown-toggle.is-active {
+        background: rgba(141, 255, 47, 0.12);
+        color: var(--accent-color-strong);
+        box-shadow: none;
+        font-weight: 700;
+    }
+
+    .site-header .nav-panel .nav-link.is-active::after,
+    .site-header .nav-panel .nav-dropdown-toggle.is-active::after,
+    body:not(.dark-mode) .site-header .nav-panel .nav-link.is-active::after,
+    body:not(.dark-mode) .site-header .nav-panel .nav-dropdown-toggle.is-active::after {
+        content: none;
     }
 
     .nav-panel .nav-link:hover,
@@ -11625,11 +11657,14 @@ color:var(--accent-color);
 }
 
 .auth-brand{
-display:inline-flex;
+display:flex;
 align-items:center;
+justify-content:center;
 gap:12px;
-margin-bottom:1.5rem;
+width:100%;
+margin:0 auto 1.5rem;
 text-decoration:none;
+text-align:center;
 }
 
 .auth-brand .brand__mark{
@@ -11647,6 +11682,10 @@ color:var(--text-muted);
 }
 
 /* HEADER */
+
+.auth-form__header{
+text-align:center;
+}
 
 .auth-form__header h2{
 color:var(--text-primary);
@@ -12199,7 +12238,7 @@ color:rgba(255,255,255,0.78);
 
 body.booking-page .booking-brand{
 display:inline-flex;
-margin-bottom:1rem;
+margin:0 0 2rem;
 }
 
 body.booking-page .booking-brand .brand__copy strong{
@@ -12223,6 +12262,22 @@ border-color:rgba(255,255,255,0.55);
 
 body.booking-page .booking-actions{
 flex-wrap:wrap;
+}
+
+body.booking-page .booking-page__redirect{
+margin-top:1rem;
+color:rgba(255,255,255,0.72);
+}
+
+body.booking-page .booking-page__redirect a{
+color:#f5f7fb;
+font-weight:700;
+text-decoration:none;
+}
+
+body.booking-page .booking-page__redirect a:hover,
+body.booking-page .booking-page__redirect a:focus-visible{
+color:var(--accent-color);
 }
 
 /* COUNTDOWN */
@@ -12315,6 +12370,10 @@ color:var(--accent-color);
 .coming-soon-wrapper{
 grid-template-columns:1fr;
 text-align:center;
+}
+
+body.booking-page .booking-brand{
+margin:0 auto 2rem;
 }
 
 .coming-soon__content p{
