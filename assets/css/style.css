@@ -12193,6 +12193,10 @@ justify-content:center;
 font-size:clamp(3rem,6vw,6rem);
 font-weight:800;
 color:transparent;
+display:inline-block;
+line-height:1.08;
+padding-inline-end:5px;
+padding-bottom:0.14em;
 
 background:linear-gradient(135deg,#8dff2f,#4be4ff);
 -webkit-background-clip:text;
@@ -12222,6 +12226,36 @@ margin:1rem 0;
 .coming-soon__content p{
 color:var(--text-muted);
 max-width:420px;
+}
+
+.coming-soon-brand{
+display:inline-flex;
+margin:0 0 2rem;
+}
+
+.coming-soon-brand .brand__copy strong{
+color:#f5f7fb;
+}
+
+.coming-soon-brand .brand__copy small{
+color:rgba(255,255,255,0.72);
+}
+
+.coming-soon__redirect{
+margin-top:1rem;
+color:rgba(255,255,255,0.72);
+max-width:420px;
+}
+
+.coming-soon__redirect a{
+color:#f5f7fb;
+font-weight:700;
+text-decoration:none;
+}
+
+.coming-soon__redirect a:hover,
+.coming-soon__redirect a:focus-visible{
+color:var(--accent-color);
 }
 
 /* ================================
@@ -12372,12 +12406,21 @@ grid-template-columns:1fr;
 text-align:center;
 }
 
+.coming-soon-brand{
+margin:0 auto 2rem;
+}
+
 body.booking-page .booking-brand{
 margin:0 auto 2rem;
 }
 
 .coming-soon__content p{
 margin:0 auto;
+}
+
+.coming-soon__redirect{
+margin-left:auto;
+margin-right:auto;
 }
 
 .coming-soon__countdown{
@@ -12425,6 +12468,10 @@ linear-gradient(180deg,#04070d 0%,#0a1018 100%);
         min-height: 40px;
         padding-inline: 0.85rem;
         font-size: 0.85rem;
+    }
+
+    .nav-panel-cta .button {
+        padding-inline-end: calc(1.5rem + 5px);
     }
 }
 

@@ -66,7 +66,7 @@ const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
 let testimonialPage = 0;
 
 const headerCta = document.querySelector(".header-cta");
-const headerLoginLink = headerCta?.querySelector("a[href*='login']");
+const headerCtaLinks = headerCta ? Array.from(headerCta.querySelectorAll("a")) : [];
 let navPanelCta = null;
 
 if (navPanel instanceof HTMLElement) {
@@ -78,16 +78,13 @@ if (navPanel instanceof HTMLElement) {
     }
 }
 
-const syncMobileLoginPlacement = () => {
-    if (!(headerLoginLink instanceof HTMLElement) || !(headerCta instanceof HTMLElement) || !(navPanelCta instanceof HTMLElement)) {
+const syncMobileCtaPlacement = () => {
+    if (!(headerCta instanceof HTMLElement) || !(navPanelCta instanceof HTMLElement) || !headerCtaLinks.length) {
         return;
     }
 
-    if (smallViewport.matches) {
-        navPanelCta.appendChild(headerLoginLink);
-    } else {
-        headerCta.insertBefore(headerLoginLink, headerCta.firstChild);
-    }
+    const target = smallViewport.matches ? navPanelCta : headerCta;
+    headerCtaLinks.forEach((link) => target.appendChild(link));
 };
 
 
@@ -535,7 +532,7 @@ updateThemeIcon();
 updateScrollState();
 updateNotificationCount();
 setActiveHeaderLink();
-syncMobileLoginPlacement();
+syncMobileCtaPlacement();
 
 themeToggle?.addEventListener("click", () => {
     body.classList.toggle("dark-mode");
@@ -544,7 +541,7 @@ themeToggle?.addEventListener("click", () => {
     window.requestAnimationFrame(initDashboardCharts);
 });
 
-smallViewport.addEventListener("change", syncMobileLoginPlacement);
+smallViewport.addEventListener("change", syncMobileCtaPlacement);
 
 
 rtlToggle?.addEventListener("click", () => {
